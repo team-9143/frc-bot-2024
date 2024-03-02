@@ -86,6 +86,7 @@ public class RobotContainer {
     OI.DRIVER_CONTROLLER.onTrue(btn.Y, cXStance::schedule);
     OI.DRIVER_CONTROLLER.onFalse(btn.Y, cXStance::cancel);
 
+    // TODO(limelight): button Y already taken (literally two lines up), use A or a bumper
     OI.DRIVER_CONTROLLER.onTrue(btn.Y, () -> Pathing.getHolonomicFollowPathCommand(Pathing.generateDirectPath(Drivetrain.getInstance().getPose(), AutoAlign.getAprilTagPose())));
   }
 

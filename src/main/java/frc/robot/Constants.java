@@ -28,6 +28,7 @@ public class Constants {
     public static final double kPigeonPitchOffset = 0;
     public static final double kPigeonRollOffset = 0;
 
+    // TODO(limelight): Change these two variables into one Pose3d relative to robot center
     public static final double limelightAngle = 0;
     public static final double limelightHeight = 0;
   }
@@ -112,12 +113,14 @@ public class Constants {
       kRotateI = new TunableNumber("I", 0, "Robot Rotation"),
       kRotateD = new TunableNumber("D", 0, "Robot Rotation");
   }
-  
+
   public static class FieldConsts {
+    // TODO(limelight): what is a "Location"? It's never used?
     public static class Location{
     Location(String location){}
     }
     Location speaker = new Location("Speaker");
+    // TODO(limelight): Change these to Pose2d's. I have resources on the positions of many field positions as well as each starting Note in auton, and you can get the rest from the field CAD (ask design if you aren't sure)
     public static final double speakerAprilTagY = 1.368552; //in meters
     public static final double ampAprilTagY = 1.273302; //in meters
   }

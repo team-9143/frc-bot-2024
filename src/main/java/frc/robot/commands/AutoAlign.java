@@ -9,6 +9,8 @@ import frc.robot.Constants.FieldConsts;
 import frc.robot.devices.Limelight;
 import frc.robot.subsystems.Drivetrain;
 
+// TODO(limelight): idk what you think this is doing. The limelight object is never initialized. Also, I see what you're trying to do - don't. Use vision measurements to adjust the PoseEstimater hooked up under the SwerveDrive class (you will have to put the limelight object in the Drivetrain or the SwerveDrive classes and call something similar to https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization#using-wpilibs-pose-estimator
+// TODO(limelight): extend CommandBase. Also, literally everything else is in 2-space indents. Change it. Finally, get rid of all of these random stub methods. (ignore this and don't use this file, leaving it here just for feedback)
 public class AutoAlign extends Command{
     private static Limelight limelight;
 
@@ -35,7 +37,7 @@ public class AutoAlign extends Command{
     public void execute() {
         double yangle = limelight.getTy();
         double xangle = limelight.getTx();
-        double ydistance = FieldConsts.speakerAprilTagY/Math.tan(yangle); 
+        double ydistance = FieldConsts.speakerAprilTagY/Math.tan(yangle);
         double xdistance = ydistance/Math.tan(xangle);
         double yspeed = ydistance > 1 ? ydistance: ydistance > 15 ? 15 : 0;
         double xspeed =  xdistance > 1 ? xdistance: xdistance > 15 ? 15 : 0;
