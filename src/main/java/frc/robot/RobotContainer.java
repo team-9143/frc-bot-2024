@@ -11,6 +11,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.logger.LoggedPowerDistribution;
+import frc.robot.autos.Pathing;
+import frc.robot.commands.AutoAlign;
 import frc.robot.devices.OI;
 import frc.robot.devices.Controller.btn;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -83,6 +85,8 @@ public class RobotContainer {
     final var cXStance = new RunCommand(Drivetrain.getInstance()::toXStance, Drivetrain.getInstance());
     OI.DRIVER_CONTROLLER.onTrue(btn.Y, cXStance::schedule);
     OI.DRIVER_CONTROLLER.onFalse(btn.Y, cXStance::cancel);
+
+    OI.DRIVER_CONTROLLER.onTrue(btn.Y, () -> Pathing.generateDirectPath(Drivetrain.getInstance().getPose(), AutoAlign.getAprilTagPose()));
   }
 
   private static void configureOperator() {

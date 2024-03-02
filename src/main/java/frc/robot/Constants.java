@@ -27,6 +27,9 @@ public class Constants {
     // Pitch and roll offsets - REMEMBER TO UPDATE
     public static final double kPigeonPitchOffset = 0;
     public static final double kPigeonRollOffset = 0;
+
+    public static final double limelightAngle = 0;
+    public static final double limelightHeight = 0;
   }
 
   // TODO(user): Fix all physical robot constraints as design dictates
@@ -108,5 +111,14 @@ public class Constants {
       kRotateP = new TunableNumber("P", 1, "Robot Rotation"),
       kRotateI = new TunableNumber("I", 0, "Robot Rotation"),
       kRotateD = new TunableNumber("D", 0, "Robot Rotation");
+  }
+  
+  public static class FieldConsts {
+    public static class Location{
+    Location(String location){}
+    }
+    Location speaker = new Location("Speaker");
+    public static final double speakerAprilTagY = 1.368552; //in meters
+    public static final double ampAprilTagY = 1.273302; //in meters
   }
 }
