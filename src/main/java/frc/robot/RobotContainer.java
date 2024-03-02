@@ -86,7 +86,7 @@ public class RobotContainer {
     OI.DRIVER_CONTROLLER.onTrue(btn.Y, cXStance::schedule);
     OI.DRIVER_CONTROLLER.onFalse(btn.Y, cXStance::cancel);
 
-    OI.DRIVER_CONTROLLER.onTrue(btn.Y, () -> Pathing.generateDirectPath(Drivetrain.getInstance().getPose(), AutoAlign.getAprilTagPose()));
+    OI.DRIVER_CONTROLLER.onTrue(btn.Y, () -> Pathing.getHolonomicFollowPathCommand(Pathing.generateDirectPath(Drivetrain.getInstance().getPose(), AutoAlign.getAprilTagPose())));
   }
 
   private static void configureOperator() {
