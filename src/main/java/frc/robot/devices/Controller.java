@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 /**
  * Class to communicate with a controller through the drive station.
- *
  * @see edu.wpi.first.wpilibj.GenericHID
  */
 public class Controller {
@@ -57,9 +56,7 @@ public class Controller {
     m_port = port;
   }
 
-  /*
-   * Retrieving raw data:
-   */
+  // Retrieving raw data.
 
   public boolean getButton(btn btn) {
     return DriverStation.getStickButton(m_port, btn.val);
@@ -69,16 +66,14 @@ public class Controller {
     return DriverStation.getStickAxis(m_port, axis.val);
   }
 
-  /** POV indexes start at 0. */
+  // POV indexes start at 0.
   public int getPOV(int pov) {
     return DriverStation.getStickPOV(m_port, pov);
   }
 
-  /*
-   * Shorthands for useful axes:
-   */
+  // Shorthands for useful axes.
 
-  /** Apply a 0.05 to 1.00 deadband to the passed value. */
+  // Apply a 0.05 to 1.00 deadband to the passed value.
   public static double deadband(double value) {
     if (Math.abs(value) > 0.05) {
       return (value - Math.copySign(0.05, value)) / 0.95;
@@ -86,7 +81,7 @@ public class Controller {
     return 0;
   }
 
-  /** Returns value: left trigger subtractive and right trigger additive [-1.0..1.0] */
+  // Returns value: left trigger subtractive and right trigger additive [-1.0..1.0].
   public double getTriggers() {
     return deadband(getAxis(axis.rightTrigger)) - deadband(getAxis(axis.leftTrigger));
   }
@@ -107,9 +102,7 @@ public class Controller {
     return deadband(getAxis(axis.rightY));
   }
 
-  /*
-   * Setting rumble and other outputs:
-   */
+  // Setting rumble and other outputs:
 
   /**
    * Set the outputs for the HID.
@@ -145,9 +138,7 @@ public class Controller {
         .withTimeout(seconds);
   }
 
-  /*
-   * Shorthands for button binding:
-   */
+  // Shorthands for button binding:
 
   public void onTrue(btn btn, Runnable run) {
     onTrue(btn, run, CommandScheduler.getInstance().getDefaultButtonLoop());
@@ -155,11 +146,12 @@ public class Controller {
 
   public void onTrue(btn btn, Runnable run, EventLoop loop) {
     loop.bind(
-        () -> {
-          if (DriverStation.getStickButtonPressed(m_port, btn.val)) {
-            run.run();
-          }
-        });
+      () -> {
+        if (DriverStation.getStickButtonPressed(m_port, btn.val)) {
+          run.run();
+        }
+      }
+    );
   }
 
   public void onFalse(btn btn, Runnable run) {
@@ -168,11 +160,12 @@ public class Controller {
 
   public void onFalse(btn btn, Runnable run, EventLoop loop) {
     loop.bind(
-        () -> {
-          if (DriverStation.getStickButtonReleased(m_port, btn.val)) {
-            run.run();
-          }
-        });
+      () -> {
+        if (DriverStation.getStickButtonReleased(m_port, btn.val)) {
+          run.run();
+        }
+      }
+    );
   }
 
   public void whileTrue(btn btn, Runnable run) {
@@ -181,10 +174,11 @@ public class Controller {
 
   public void whileTrue(btn btn, Runnable run, EventLoop loop) {
     loop.bind(
-        () -> {
-          if (DriverStation.getStickButton(m_port, btn.val)) {
-            run.run();
-          }
-        });
+      () -> {
+        if (DriverStation.getStickButton(m_port, btn.val)) {
+          run.run();
+        }
+      }
+    );
   }
 }

@@ -6,10 +6,10 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 public class LoggedPowerDistribution extends PowerDistribution implements Loggable {
   private static final String LOG_DIR = "/Power/";
 
-  // Faults to compare against to log differences
+  // Faults to compare against to log differences.
   private PowerDistributionFaults prevFaults = new PowerDistributionFaults(0);
 
-  /** Detects the connected PDP/PDH using the default CAN ID (0 for CTRE and 1 for REV). */
+  // Detects the connected PDP/PDH using the default CAN ID (0 for CTRE and 1 for REV).
   public LoggedPowerDistribution() {
     super();
 

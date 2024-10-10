@@ -21,55 +21,52 @@ import java.util.function.BiConsumer;
  */
 public class MutableChooser<T extends Enum<T>> implements NTSendable, AutoCloseable {
 
-  /** The key for the default value. */
+  // The key for the default value.
   private static final String DEFAULT = "default";
 
-  /** The key for the selected option. */
+  // The key for the selected option.
   private static final String SELECTED = "selected";
 
-  /** The key for the active option. */
+  // The key for the active option.
   private static final String ACTIVE = "active";
 
-  /** The key for the option array. */
+  // The key for the option array.
   private static final String OPTIONS = "options";
 
-  /** The key for the instance number. */
+  // The key for the instance number.
   private static final String INSTANCE = ".instance";
 
-  /**
-   * A Lock to stop simultaneous editing of shuffleboard options, selection, or selection
-   * publishers.
-   */
+  // A Lock to stop simultaneous editing of shuffleboard options, selection, or selection publishers.
   private final ReentrantLock m_networkLock = new ReentrantLock(true);
 
-  /** A map linking options to their identifiers, for use with shuffleboard. */
+  // A map linking options to their identifiers, for use with shuffleboard.
   private final LinkedHashMap<String, T> m_linkedOptions = new LinkedHashMap<>();
 
-  /** Key for the default selection. */
+  // Key for the default selection.
   private final String m_defaultKey;
 
-  /** Default selection. */
+  // Default selection.
   private final T m_defaultObj;
 
-  /** Key for the current selection. */
+  // Key for the current selection.
   private String m_selectedKey;
 
-  /** A Lock to stop simulataneous reading and writing to list of updates. */
+  // A Lock to stop simulataneous reading and writing to list of updates.
   private final ReentrantLock m_updateLock = new ReentrantLock(true);
 
-  /** A Set storing the options to be updated on the next update. */
+  // A Set storing the options to be updated on the next update.
   private final EnumSet<T> m_optionsWanted;
 
-  /** If an update is required to sync options on shuffleboard. */
+  // If an update is required to sync options on shuffleboard.
   private boolean m_updateReq = false;
 
-  /** A consumer to be called with the old and new selections when the selection changes. */
+  // A consumer to be called with the old and new selections when the selection changes.
   private BiConsumer<T, T> m_bindTo = null;
 
-  /** ArrayList to keep track of publishers. */
+  // ArrayList to keep track of publishers.
   private final ArrayList<StringPublisher> m_activePubs = new ArrayList<>();
 
-  /** Number of instances. */
+  // Number of instances.
   private final int m_instance;
 
   private static int s_instances = 0;
@@ -91,7 +88,7 @@ public class MutableChooser<T extends Enum<T>> implements NTSendable, AutoClosea
     m_linkedOptions.put(m_defaultKey, obj);
   }
 
-  /** Syncs options on shuffleboard if default option is selected. */
+  // Syncs options on shuffleboard if default option is selected.
   private void updateOptions() {
     m_networkLock.lock();
     m_updateLock.lock();
@@ -182,7 +179,7 @@ public class MutableChooser<T extends Enum<T>> implements NTSendable, AutoClosea
     }
   }
 
-  /** Returns the selected option, and the default if there is no selection. */
+  // Returns the selected option, and the default if there is no selection.
   public T getSelected() {
     m_networkLock.lock();
     try {
@@ -212,19 +209,20 @@ public class MutableChooser<T extends Enum<T>> implements NTSendable, AutoClosea
 
     builder.addStringProperty(DEFAULT, () -> m_defaultKey, null);
     builder.addStringArrayProperty(
-        OPTIONS, () -> m_linkedOptions.keySet().toArray(new String[0]), null);
+      OPTIONS, () -> m_linkedOptions.keySet().toArray(new String[0]), null);
 
     builder.addStringProperty(
-        ACTIVE,
-        () -> {
-          m_networkLock.lock();
-          try {
-            return m_selectedKey;
-          } finally {
-            m_networkLock.unlock();
-          }
-        },
-        null);
+      ACTIVE,
+      () -> {
+        m_networkLock.lock();
+        try {
+          return m_selectedKey;
+        } finally {
+          m_networkLock.unlock();
+        }
+      },
+      null
+    );
 
     m_networkLock.lock();
     try {
@@ -234,30 +232,31 @@ public class MutableChooser<T extends Enum<T>> implements NTSendable, AutoClosea
     }
 
     builder.addStringProperty(
-        SELECTED,
-        null,
-        newSelectionKey -> {
-          T oldSelection, newSelection;
+      SELECTED,
+      null,
+      newSelectionKey -> {
+        T oldSelection, newSelection;
 
-          m_networkLock.lock();
-          try {
-            oldSelection = m_linkedOptions.get(m_selectedKey);
-            newSelection = m_linkedOptions.get(newSelectionKey);
+        m_networkLock.lock();
+        try {
+          oldSelection = m_linkedOptions.get(m_selectedKey);
+          newSelection = m_linkedOptions.get(newSelectionKey);
 
-            m_activePubs.forEach(pub -> pub.set(newSelectionKey));
-            m_selectedKey = newSelectionKey;
+          m_activePubs.forEach(pub -> pub.set(newSelectionKey));
+          m_selectedKey = newSelectionKey;
 
-            if (m_updateReq) {
-              updateOptions();
-            }
-          } finally {
-            m_networkLock.unlock();
+          if (m_updateReq) {
+            updateOptions();
           }
+        } finally {
+          m_networkLock.unlock();
+        }
 
-          if (m_bindTo != null) {
-            m_bindTo.accept(oldSelection, newSelection);
-          }
-        });
+        if (m_bindTo != null) {
+          m_bindTo.accept(oldSelection, newSelection);
+        }
+      }
+    );
   }
 
   @Override

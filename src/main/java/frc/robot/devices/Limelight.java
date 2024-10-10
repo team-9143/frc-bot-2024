@@ -5,9 +5,9 @@ import edu.wpi.first.networktables.IntegerPublisher;
 import edu.wpi.first.networktables.NetworkTable;
 
 // TODO(dev): Add AprilTag functionality and parameterize subscribers to limit bandwith use
-/** Class for Limelight interfacing. */
+// Class for Limelight interfacing.
 public class Limelight {
-  /** Limelight datatable */
+  // Limelight datatable
   private final NetworkTable m_limelight;
 
   private final DoubleSubscriber tv_sub, tx_sub, ty_sub, ta_sub, tid_sub, pipeline_sub;
@@ -32,32 +32,32 @@ public class Limelight {
     cam_pub = m_limelight.getIntegerTopic("camMode").publish();
   }
 
-  /** Returns horizontal angle to target (UNIT: degrees) */
+  // Returns horizontal angle to target (UNIT: degrees)
   public double getTx() {
     return tx_sub.getAsDouble();
   }
 
-  /** Returns vertical angle to target (UNIT: degrees) */
+  // Returns vertical angle to target (UNIT: degrees)
   public double getTy() {
     return ty_sub.getAsDouble();
   }
 
-  /** Returns percent area of target relative to camera */
+  // Returns percent area of target relative to camera
   public double getArea() {
     return ta_sub.getAsDouble();
   }
 
-  /** Returns {@code true} if a valid target exists */
+  // Returns {@code true} if a valid target exists
   public boolean getValid() {
     return (tv_sub.getAsDouble() == 1) ? true : false;
   }
 
-  /** Returns ID of the targeted AprilTag */
+  // Returns ID of the targeted AprilTag
   public int getTid() {
     return (int) tid_sub.getAsDouble();
   }
 
-  /** Returns active pipeline index [0..9] */
+  // Returns active pipeline index [0..9]
   public int getPipeline() {
     return (int) pipeline_sub.getAsDouble();
   }

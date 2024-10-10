@@ -17,7 +17,7 @@ import frc.robot.devices.OI;
 import frc.robot.logger.Logger;
 import frc.robot.util.SwerveDrive;
 
-/** Controls the robot drivetrain. */
+// Controls the robot drivetrain.
 public class Drivetrain extends SafeSubsystem {
   // Pigeon2 setup
   private static final Pigeon2 m_pigeon2 = new Pigeon2(DeviceConstants.kPigeonID);
@@ -29,32 +29,34 @@ public class Drivetrain extends SafeSubsystem {
     m_pigeon2.getConfigurator().apply(Config.kPigeonMountPose);
     m_pigeon2.setYaw(0);
     StatusSignal.setUpdateFrequencyForAll(
-        1000d / DriveConstants.kPeriodMs, m_yawSignal, m_pitchSignal, m_rollSignal);
+      1000d / DriveConstants.kPeriodMs, m_yawSignal, m_pitchSignal, m_rollSignal
+    );
     m_pigeon2.optimizeBusUtilization();
   }
 
-  /** To adjust 3d rotation to match with 2d odometry after a heading reset */
+  // To adjust 3d rotation to match with 2d odometry after a heading reset
   private static Rotation2d yawOffset = new Rotation2d();
 
   public static final SwerveModuleState[] xStanceStates =
-      new SwerveModuleState[] {
-        new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
-        new SwerveModuleState(0, Rotation2d.fromDegrees(135)),
-        new SwerveModuleState(0, Rotation2d.fromDegrees(135)),
-        new SwerveModuleState(0, Rotation2d.fromDegrees(45))
-      };
+    new SwerveModuleState[] {
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45)),
+      new SwerveModuleState(0, Rotation2d.fromDegrees(135)),
+      new SwerveModuleState(0, Rotation2d.fromDegrees(135)),
+      new SwerveModuleState(0, Rotation2d.fromDegrees(45))
+    };
 
   private static final SwerveDrive m_swerve =
-      new SwerveDrive(
-          m_pigeon2::getRotation2d,
-          SwerveConstants.kSwerve_fl,
-          SwerveConstants.kSwerve_fr,
-          SwerveConstants.kSwerve_bl,
-          SwerveConstants.kSwerve_br);
+    new SwerveDrive(
+      m_pigeon2::getRotation2d,
+      SwerveConstants.kSwerve_fl,
+      SwerveConstants.kSwerve_fr,
+      SwerveConstants.kSwerve_bl,
+      SwerveConstants.kSwerve_br
+    );
 
   private static final Drivetrain m_instance = new Drivetrain();
 
-  /** Returns the singleton instance */
+  // Returns the singleton instance
   public static Drivetrain getInstance() {
     return m_instance;
   }
@@ -62,69 +64,63 @@ public class Drivetrain extends SafeSubsystem {
   private Drivetrain() {
     // Default drive command
     setDefaultCommand(
-        run(
-            () -> {
-              // Left joystick for translation, right joystick for rotation
-              double forward = -OI.DRIVER_CONTROLLER.getLeftY();
-              double left = -OI.DRIVER_CONTROLLER.getLeftX();
-              double ccw = -OI.DRIVER_CONTROLLER.getRightX();
+      run(
+        () -> {
+          // Left joystick for translation, right joystick for rotation
+          double forward = -OI.DRIVER_CONTROLLER.getLeftY();
+          double left = -OI.DRIVER_CONTROLLER.getLeftX();
+          double ccw = -OI.DRIVER_CONTROLLER.getRightX();
 
-              // Field relative control, exponentially scaling inputs to increase sensitivity
-              driveFieldRelativeVelocity(
-                  new ChassisSpeeds(
-                      Math.copySign(forward * forward, forward)
-                          * DriveConstants.kMaxLinearVelMetersPerSecond
-                          * DriveConstants.kTeleopSpeedMult,
-                      Math.copySign(left * left, left)
-                          * DriveConstants.kMaxLinearVelMetersPerSecond
-                          * DriveConstants.kTeleopSpeedMult,
-                      // Extra sensitivity for finer rotation control
-                      Math.copySign(ccw * ccw * ccw, ccw)
-                          * DriveConstants.kMaxTurnVelRadiansPerSecond
-                          * DriveConstants.kTeleopTurnMult));
-            }));
+          // Field relative control, exponentially scaling inputs to increase sensitivity
+          driveFieldRelativeVelocity(
+            new ChassisSpeeds(
+              Math.copySign(forward * forward, forward)
+                * DriveConstants.kMaxLinearVelMetersPerSecond
+                * DriveConstants.kTeleopSpeedMult,
+              Math.copySign(left * left, left)
+                * DriveConstants.kMaxLinearVelMetersPerSecond
+                * DriveConstants.kTeleopSpeedMult,
+              // Extra sensitivity for finer rotation control
+              Math.copySign(ccw * ccw * ccw, ccw)
+                * DriveConstants.kMaxTurnVelRadiansPerSecond
+                * DriveConstants.kTeleopTurnMult
+            )
+          );
+        }
+      )
+    );
   }
 
-  /**
-   * Updates the swerve module states and drivetrain odometry. Should be called as often as
-   * possible.
-   */
+  // Updates the swerve module states and drivetrain odometry. Should be called as often as possible.
   public static void update() {
     m_swerve.updateSpeeds();
     m_swerve.updateOdometry();
   }
 
-  /**
-   * Drive with field relative velocities. Must be continuously called.
-   *
-   * @param speeds {@link ChassisSpeeds} object in meters/s
-   */
+  // Drive with field relative velocities. Must be continuously called.
+  // @param speeds {@link ChassisSpeeds} object in meters/s
   public static void driveFieldRelativeVelocity(ChassisSpeeds speeds) {
     // Rotate by relative rotation to fix path following and driving on red side
     m_swerve.setDesiredVelocityRobotRelative(
-        ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation()));
+      ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation())
+    );
   }
 
-  /**
-   * Drive with robot relative velocities. Must be continuously called.
-   *
-   * @param speeds {@link ChassisSpeeds} object in meters/s
-   */
+  // Drive with robot relative velocities. Must be continuously called.
+  // @param speeds {@link ChassisSpeeds} object in meters/s
   public static void driveRobotRelativeVelocity(ChassisSpeeds speeds) {
     m_swerve.setDesiredVelocityRobotRelative(speeds);
   }
 
-  /** Set the drivetrain to x-stance for traction. Must be continuously called. */
+  // Set the drivetrain to x-stance for traction. Must be continuously called.
   public static void toXStance() {
     m_swerve.setDesiredStates(
-        xStanceStates[0], xStanceStates[1], xStanceStates[2], xStanceStates[3]);
+      xStanceStates[0], xStanceStates[1], xStanceStates[2], xStanceStates[3]
+    );
   }
 
-  /**
-   * Reset the odometry to a given position.
-   *
-   * @param positionMetersCCW robot position (UNIT: meters, ccw native angle)
-   */
+  // Reset the odometry to a given position.
+  // @param positionMetersCCW robot position (UNIT: meters, ccw native angle)
   public static void resetOdometry(Pose2d positionMetersCCW) {
     var gyroAngle = m_pigeon2.getRotation2d();
 
@@ -132,36 +128,37 @@ public class Drivetrain extends SafeSubsystem {
     m_swerve.resetOdometry(positionMetersCCW, gyroAngle);
   }
 
-  /** Returns the robot's estimated location */
+  // Returns the robot's estimated location
   public static Pose2d getPose() {
     return m_swerve.getPose();
   }
 
-  /** Returns the gyro's orientation */
+  // Returns the gyro's orientation
   public static Rotation3d getOrientation() {
     BaseStatusSignal.refreshAll(m_yawSignal, m_pitchSignal, m_rollSignal);
     return new Rotation3d(
-        Math.toRadians(m_rollSignal.getValue()),
-        Math.toRadians(m_pitchSignal.getValue()),
-        Math.toRadians(m_rollSignal.getValue()) + yawOffset.getRadians());
+      Math.toRadians(m_rollSignal.getValue()),
+      Math.toRadians(m_pitchSignal.getValue()),
+      Math.toRadians(m_rollSignal.getValue()) + yawOffset.getRadians()
+    );
   }
 
-  /** Returns the drivetrain's desired velocities */
+  // Returns the drivetrain's desired velocities.
   public static ChassisSpeeds getDesiredSpeeds() {
     return m_swerve.getDesiredSpeeds();
   }
 
-  /** Returns the drivetrain's actual velocities, as measured by encoders */
+  // Returns the drivetrain's actual velocities, as measured by encoders.
   public static ChassisSpeeds getMeasuredSpeeds() {
     return m_swerve.getMeasuredSpeeds();
   }
 
-  /** Returns individual desired module states */
+  // Returns individual desired module states.
   public static SwerveModuleState[] getDesiredStates() {
     return m_swerve.getDesiredStates();
   }
 
-  /** Returns individual measured module states */
+  // Returns individual measured module states.
   public static SwerveModuleState[] getMeasuredStates() {
     return m_swerve.getMeasuredStates();
   }
@@ -176,10 +173,11 @@ public class Drivetrain extends SafeSubsystem {
     Logger.recordOutput(getDirectory() + "measuredSpeeds", getMeasuredSpeeds());
     Logger.recordOutput(getDirectory() + "desiredSpeeds", getDesiredSpeeds());
 
-    // 3d pose with height always set to 0
+    // 3d pose with height always set to 0.
     Logger.recordOutput(
-        getDirectory() + "3dPosition",
-        new Pose3d(getPose().getX(), getPose().getY(), 0, getOrientation()));
+      getDirectory() + "3dPosition",
+      new Pose3d(getPose().getX(), getPose().getY(), 0, getOrientation())
+    );
 
     // Uncoment to log azimuth errors
     // Logger.recordOutput(getDirectory()+"AngleErrorFL", m_swerve.modules[0].getAngleError());

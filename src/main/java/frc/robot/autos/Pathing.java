@@ -21,56 +21,52 @@ import frc.robot.subsystems.Drivetrain;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Utility class for loading, generating, following, and logging paths through PathPlanner. PID
- * controllers are initialized at runtime so that TunableNumbers can take effect.
- */
+// Utility class for loading, generating, following, and logging paths through PathPlanner.
+// PID controllers are initialized at runtime so that TunableNumbers can take effect.
 public class Pathing {
   private static final String PATH_LOG_DIR = "/pathplanner/";
 
-  /** Default constraints for accurately generating and following paths */
+  // Default constraints for accurately generating and following paths.
   private static final PathConstraints DEFAULT_CONSTRAINTS =
-      new PathConstraints(
-          DriveConstants.kMaxLinearVelMetersPerSecond,
-          AutoConstants.kMaxLinearAccelMetersPerSecondSquared,
-          DriveConstants.kMaxTurnVelRadiansPerSecond,
-          AutoConstants.kMaxTurnAccelRadiansPerSecondSquared);
+    new PathConstraints(
+      DriveConstants.kMaxLinearVelMetersPerSecond,
+      AutoConstants.kMaxLinearAccelMetersPerSecondSquared,
+      DriveConstants.kMaxTurnVelRadiansPerSecond,
+      AutoConstants.kMaxTurnAccelRadiansPerSecondSquared);
 
-  // Set up logging for basic path following
+  // Set up logging for basic path following.
   static {
-    // Log trajectory on command initialization
+    // Log trajectory on command initialization.
     PathPlannerLogging.setLogActivePathCallback(
-        poses -> Logger.recordOutput(PATH_LOG_DIR + "activePath", poses.toArray(Pose2d[]::new)));
+      poses -> Logger.recordOutput(PATH_LOG_DIR + "activePath", poses.toArray(Pose2d[]::new))
+    );
 
-    // Log target pose during command run
+    // Log target pose during command run.
     PathPlannerLogging.setLogTargetPoseCallback(
-        pose -> Logger.recordOutput(PATH_LOG_DIR + "targetPose", pose));
+      pose -> Logger.recordOutput(PATH_LOG_DIR + "targetPose", pose)
+    );
 
-    // No need to log current robot pose, drivetrain will do that
+    // No need to log current robot pose, drivetrain will do that.
     PathPlannerLogging.setLogCurrentPoseCallback(null);
   }
 
-  // Configure AutoBuilder
+  // Configure AutoBuilder.
   static {
     AutoBuilder.configureHolonomic(
-        Drivetrain::getPose, // Pose supplier
-        Drivetrain::resetOdometry, // Reset pose consumer
-        Drivetrain::getMeasuredSpeeds, // Current measured speeds
-        Drivetrain::driveRobotRelativeVelocity, // Robot-relative velocities consumer
-        getHolonomicConfig(new ReplanningConfig(false, false)), // Config
-        Pathing::isRedAlliance, // Flip if alliance is red
-        Drivetrain.getInstance() // Subsystem
-        );
+      Drivetrain::getPose, // Pose supplier
+      Drivetrain::resetOdometry, // Reset pose consumer
+      Drivetrain::getMeasuredSpeeds, // Current measured speeds
+      Drivetrain::driveRobotRelativeVelocity, // Robot-relative velocities consumer
+      getHolonomicConfig(new ReplanningConfig(false, false)), // Config
+      Pathing::isRedAlliance, // Flip if alliance is red
+      Drivetrain.getInstance() // Subsystem
+    );
   }
 
-  /******
-   *
-   * Path loading and generation
-   *
-   ******/
+  // Path loading and generation.
 
   /**
-   * Load a pathplanner path from RIO local storage
+   * Load a pathplanner path from RIO local storage.
    *
    * @param name name of the path file under [deploy/pathplanner/paths/], omitting ".path"
    */
@@ -79,7 +75,7 @@ public class Pathing {
   }
 
   /**
-   * Load a choreo trajectory from RIO local storage
+   * Load a choreo trajectory from RIO local storage.
    *
    * @param name name of the path file under [deploy/choreo/], omitting ".traj"
    */
@@ -88,37 +84,34 @@ public class Pathing {
   }
 
   /**
-   * Create a pathplanner path to move directly from one position to another
+   * Create a pathplanner path to move directly from one position to another.
    *
    * @param startPoseMetersCCW starting position for the command
    * @param endPoseMetersCCW ending position for the command
    */
   public static PathPlannerPath generateDirectPath(
-      Pose2d startPoseMetersCCW, Pose2d endPoseMetersCCW) {
+    Pose2d startPoseMetersCCW, Pose2d endPoseMetersCCW
+  ) {
     return new PathPlannerPath(
-        // Creating bezier points like this enforces a straight-line path
-        List.of(
-            startPoseMetersCCW.getTranslation(),
-            startPoseMetersCCW.getTranslation(),
-            endPoseMetersCCW.getTranslation(),
-            endPoseMetersCCW.getTranslation()),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        Collections.emptyList(),
-        DEFAULT_CONSTRAINTS,
-        new GoalEndState(0, endPoseMetersCCW.getRotation()),
-        false);
+      // Creating bezier points like this enforces a straight-line path
+      List.of(
+        startPoseMetersCCW.getTranslation(),
+        startPoseMetersCCW.getTranslation(),
+        endPoseMetersCCW.getTranslation(),
+        endPoseMetersCCW.getTranslation()),
+      Collections.emptyList(),
+      Collections.emptyList(),
+      Collections.emptyList(),
+      DEFAULT_CONSTRAINTS,
+      new GoalEndState(0, endPoseMetersCCW.getRotation()),
+      false
+    );
   }
 
-  /******
-   *
-   * Path following
-   *
-   ******/
+  // Path following
 
   /**
-   * Create a command to follow a pathplanner path. Does not replan the path under any
-   * circumstances.
+   * Create a command to follow a pathplanner path. Does not replan the path under any circumstances.
    *
    * @param path the pathplanner path to follow
    */
@@ -133,21 +126,21 @@ public class Pathing {
    * @param replanningConfig replanning configuration to use
    */
   public static Command getHolonomicFollowPathCommand(
-      PathPlannerPath path, ReplanningConfig replanningConfig) {
+    PathPlannerPath path, ReplanningConfig replanningConfig
+  ) {
     return new FollowPathHolonomic(
-        path, // Path to follow
-        Drivetrain::getPose, // Pose supplier
-        Drivetrain::getMeasuredSpeeds, // Chassis speeds supplier
-        Drivetrain::driveRobotRelativeVelocity, // Robot-relative velocities consumer
-        getHolonomicConfig(replanningConfig), // Follower configuration
-        Pathing::isRedAlliance, // Flip the path if alliance is red
-        Drivetrain.getInstance() // Subsystem requirements
-        );
+      path, // Path to follow
+      Drivetrain::getPose, // Pose supplier
+      Drivetrain::getMeasuredSpeeds, // Chassis speeds supplier
+      Drivetrain::driveRobotRelativeVelocity, // Robot-relative velocities consumer
+      getHolonomicConfig(replanningConfig), // Follower configuration
+      Pathing::isRedAlliance, // Flip the path if alliance is red
+      Drivetrain.getInstance() // Subsystem requirements
+    );
   }
 
   /**
-   * Create a command to follow a pathplanner auto. Only replans the path if the initial error is
-   * too large.
+   * Create a command to follow a pathplanner auto. Only replans the path if the initial error is too large.
    *
    * @param name name of the path file under [deploy/pathplanner/autos/], omitting ".auto"
    */
@@ -156,8 +149,7 @@ public class Pathing {
   }
 
   /**
-   * Create a command that follows a path directly to the target pose and stops. Command should be
-   * scheduled before any other movement happens.
+   * Create a command that follows a path directly to the target pose and stops. Command should be scheduled before any other movement happens.
    *
    * @param targetPoseMetersCCW target position for the command
    */
@@ -179,11 +171,7 @@ public class Pathing {
     return AutoBuilder.pathfindThenFollowPath(path, DEFAULT_CONSTRAINTS);
   }
 
-  /******
-   *
-   * Utility
-   *
-   ******/
+  // Utility
 
   /**
    * Utility method to get a path follower config for the swerve drivetrain
@@ -193,21 +181,23 @@ public class Pathing {
    */
   private static HolonomicPathFollowerConfig getHolonomicConfig(ReplanningConfig replanningConfig) {
     return new HolonomicPathFollowerConfig(
-        // Translation controller for position error -> velocity
-        new PIDConstants(
-            AutoConstants.kTranslateP.getAsDouble(), 0, AutoConstants.kTranslateD.getAsDouble()),
-        // Rotational gains are multiplied by "radius" (use swerve module farthest from COR) to
-        // change units from radians to meters so that gains can theoretically be the same
-        new PIDConstants(
-            AutoConstants.kTranslateP.getAsDouble() * SwerveConstants.kDriveBaseRadius,
-            0,
-            AutoConstants.kTranslateD.getAsDouble() * SwerveConstants.kDriveBaseRadius),
-        // Maximum module speed
-        DriveConstants.kMaxLinearVelMetersPerSecond,
-        // Radius of drive base
-        frc.robot.Constants.SwerveConstants.kSwerve_fl.location.getDistance(new Translation2d()),
-        // When to replan the path
-        replanningConfig);
+      // Translation controller for position error -> velocity
+      new PIDConstants(
+        AutoConstants.kTranslateP.getAsDouble(), 0, AutoConstants.kTranslateD.getAsDouble()
+      ),
+      // Rotational gains are multiplied by "radius" (use swerve module farthest from COR) to change units from radians to meters so that gains can theoretically be the same
+      new PIDConstants(
+        AutoConstants.kTranslateP.getAsDouble() * SwerveConstants.kDriveBaseRadius,
+        0,
+        AutoConstants.kTranslateD.getAsDouble() * SwerveConstants.kDriveBaseRadius
+      ),
+      // Maximum module speed
+      DriveConstants.kMaxLinearVelMetersPerSecond,
+      // Radius of drive base
+      frc.robot.Constants.SwerveConstants.kSwerve_fl.location.getDistance(new Translation2d()),
+      // When to replan the path
+      replanningConfig
+    );
   }
 
   /**
@@ -217,6 +207,6 @@ public class Pathing {
    */
   public static boolean isRedAlliance() {
     return DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue)
-        == DriverStation.Alliance.Red;
+      == DriverStation.Alliance.Red;
   }
 }

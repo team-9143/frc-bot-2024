@@ -53,12 +53,12 @@ public class RobotContainer {
     Logger.recordMetadata("Station", DriverStation.getRawAllianceStation().toString());
 
     Logger.recordMetadata(
-        "Match",
-        DriverStation.getEventName()
-            + " "
-            + DriverStation.getMatchType().toString()
-            + " "
-            + DriverStation.getMatchNumber());
+      "Match",
+      DriverStation.getEventName()
+        + " "
+        + DriverStation.getMatchType().toString()
+        + " "
+        + DriverStation.getMatchNumber());
 
     Logger.initFilename();
   }
@@ -66,14 +66,14 @@ public class RobotContainer {
   // Send metadata to logger.
   private static void logMetadata() {
     Logger.recordMetadata(
-        "Time",
-        LocalDateTime.now(ZoneId.of("UTC-8"))
-            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+      "Time",
+      LocalDateTime.now(ZoneId.of("UTC-8"))
+        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
     Logger.recordMetadata("NT Streaming", String.valueOf(Constants.Config.NTStream));
 
     Logger.recordMetadata(
-        "RoborioSerialNum", RobotBase.isReal() ? System.getenv("serialnum") : "Simulation");
+      "RoborioSerialNum", RobotBase.isReal() ? System.getenv("serialnum") : "Simulation");
 
     Logger.recordMetadata("PowerDistributionType", powerDist.getType().name());
   }
@@ -89,11 +89,11 @@ public class RobotContainer {
   public static void configureBindings() {
     // Button 'B' (hold) will continuously stop all movement
     new Trigger(
-            () -> OI.DRIVER_CONTROLLER.getButton(btn.B) || OI.OPERATOR_CONTROLLER.getButton(btn.B))
-        .whileTrue(
-            new RunCommand(RobotContainer::stop, SafeSubsystem.getAll())
-                // Interrupt incoming commands to ensure stop command takes precedence
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      () -> OI.DRIVER_CONTROLLER.getButton(btn.B) || OI.OPERATOR_CONTROLLER.getButton(btn.B))
+      .whileTrue(
+      new RunCommand(RobotContainer::stop, SafeSubsystem.getAll())
+      // Interrupt incoming commands to ensure stop command takes precedence
+      .withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
     configureDriver();
     configureOperator();
@@ -103,16 +103,18 @@ public class RobotContainer {
     // Button 'X' (debounced 0.25s) will reset heading
     final var cRumble = OI.DRIVER_CONTROLLER.getRumbleCommand(0.5, 0.5, 0.25);
     new Trigger(() -> OI.DRIVER_CONTROLLER.getButton(btn.X))
-        .debounce(0.25) // Wait 0.25s to avoid accidental press
-        .onTrue(
-            new InstantCommand(
-                () -> {
-                  // Reset odometry so that forward is away from the driver station
-                  Drivetrain.resetOdometry(
-                      new Pose2d(Drivetrain.getPose().getTranslation(), new Rotation2d(0)));
-                  // Rumble to indicate odometry has been reset
-                  cRumble.schedule();
-                }));
+      .debounce(0.25) // Wait 0.25s to avoid accidental press
+      .onTrue(
+        new InstantCommand(
+          () -> {
+            // Reset odometry so that forward is away from the driver station
+            Drivetrain.resetOdometry(
+            new Pose2d(Drivetrain.getPose().getTranslation(), new Rotation2d(0)));
+            // Rumble to indicate odometry has been reset
+            cRumble.schedule();
+          }
+        )
+      );
 
     // Button 'Y' (hold) will set drivetrain to x-stance (for stability)
     final var cXStance = new RunCommand(Drivetrain::toXStance, Drivetrain.getInstance());
@@ -171,16 +173,17 @@ public class RobotContainer {
     // Set up a binding to run the Amper hold position command while the operator is pressing and
     // holding the X button.
     OI.OPERATOR_CONTROLLER.onTrue(
-        btn.X,
-        () -> {
-          if (isHoldPositionActive) {
-            Amper.getInstance().stop();
-            isHoldPositionActive = false;
-          } else {
-            Amper.getInstance().getHoldPositionCommand();
-            isHoldPositionActive = true;
-          }
-        });
+      btn.X,
+      () -> {
+        if (isHoldPositionActive) {
+          Amper.getInstance().stop();
+          isHoldPositionActive = false;
+        } else {
+          Amper.getInstance().getHoldPositionCommand();
+          isHoldPositionActive = true;
+        }
+      }
+    );
 
     /*
      * TODO (climbers): This in fact will not work how you expect it to...
@@ -197,10 +200,9 @@ public class RobotContainer {
     final Command cExtendClimbers = Climbers.getInstance().extendClimbers();
     // Joystick Y controls climbers
     new Trigger(
-            () ->
-                Math.abs(OI.OPERATOR_CONTROLLER.getLeftY()) > 0.15
-                    || Math.abs(OI.OPERATOR_CONTROLLER.getRightY()) > 0.15)
-        .onTrue(new InstantCommand(() -> cExtendClimbers.schedule()));
+      () -> Math.abs(OI.OPERATOR_CONTROLLER.getLeftY()) > 0.15
+        || Math.abs(OI.OPERATOR_CONTROLLER.getRightY()) > 0.15)
+      .onTrue(new InstantCommand(() -> cExtendClimbers.schedule()));
   }
 
   // Calls all subsystem stop methods. Does not stop commands.

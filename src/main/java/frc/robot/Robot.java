@@ -33,9 +33,9 @@ public class Robot extends TimedRobot {
 
     // Add periodic callback for drivetrain updates
     addPeriodic(
-        Drivetrain::update,
-        DriveConstants.kPeriodMs / 1000d,
-        (kDefaultPeriod - (DriveConstants.kPeriodMs / 1000d)) / 2);
+      Drivetrain::update,
+      DriveConstants.kPeriodMs / 1000d,
+      (kDefaultPeriod - (DriveConstants.kPeriodMs / 1000d)) / 2);
   }
 
   @Override

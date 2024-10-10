@@ -6,27 +6,33 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.logger.Logger;
 
-// TODO: Test 4 escape autos on both alliances
-/** Contains auto types, choosers, and compiler. */
+// TODO: Test 4 escape autos on both alliances.
+// Contains auto types, choosers, and compiler.
 public class AutoSelector {
   private static final MutableChooser<StartPose> chooser_startPose =
-      new MutableChooser<>(StartPose.Wing);
+    new MutableChooser<>(StartPose.Wing);
   private static final MutableChooser<Starter> chooser_starter = new MutableChooser<>(Starter.None);
   private static final MutableChooser<Body> chooser_body = new MutableChooser<>(Body.None);
 
-  /** Initializes shuffleboard choosers for auton */
+  // Initializes shuffleboard choosers for auton.
   public static void init() {
     chooser_startPose.setAll(
-        StartPose.Subwoofer_front,
-        StartPose.Subwoofer_source_side,
-        StartPose.Subwoofer_amp_side,
-        StartPose.Subwoofer_amp_side_v2,
-        StartPose.Subwoofer_front_v2,
-        StartPose.Subwoofer_source_side_v2,
-        StartPose.Subwoofer_amp_side_v3,
-        StartPose.Subwoofer_source_side_v3);
-    chooser_starter.setAll(Starter.Shoot, Starter.Wait_and_shoot);
-    chooser_body.setAll(Body.Escape);
+      StartPose.Subwoofer_front,
+      StartPose.Subwoofer_source_side,
+      StartPose.Subwoofer_amp_side,
+      StartPose.Subwoofer_amp_side_v2,
+      StartPose.Subwoofer_front_v2,
+      StartPose.Subwoofer_source_side_v2,
+      StartPose.Subwoofer_amp_side_v3,
+      StartPose.Subwoofer_source_side_v3
+    );
+    chooser_starter.setAll(
+      Starter.Shoot,
+      Starter.Wait_and_shoot
+    );
+    chooser_body.setAll(
+      Body.Escape
+    );
 
     // Add to shuffleboard
     var tab = Shuffleboard.getTab("Auton");
@@ -35,29 +41,32 @@ public class AutoSelector {
     tab.add("Body", chooser_body).withPosition(0, 6).withSize(4, 2);
 
     tab.addBoolean(
-            "Reset defaults if red",
-            () ->
-                !(chooser_startPose.isUpdateReq()
-                    || chooser_starter.isUpdateReq()
-                    || chooser_body.isUpdateReq()))
-        .withPosition(0, 0)
-        .withSize(4, 2);
+      "Reset defaults if red",
+      () ->
+        !(chooser_startPose.isUpdateReq()
+          || chooser_starter.isUpdateReq()
+          || chooser_body.isUpdateReq()
+        )
+    )
+    .withPosition(0, 0)
+    .withSize(4, 2);
 
-    // Limelight stream, maybe
+    // Limelight stream, maybe.
     // HttpCamera httpCamera = new HttpCamera("Limelight", "http://10.91.43.11:5800/stream.mjpg");
     // tab.add(httpCamera).withPosition(4, 0).withSize(15, 7);
   }
 
-  /** Returns a fu ll auto routine */
+  // Returns a full auto routine.
   public static Command getAuto() {
     var startPose = chooser_startPose.getSelected();
     var starter = chooser_starter.getSelected();
     var body = chooser_body.getSelected();
 
-    // Log alliance and auton selection
+    // Log alliance and auton selection.
     Logger.log((Pathing.isRedAlliance() ? "RED ALLIANCE" : "BLUE ALLIANCE"));
     Logger.log(
-        "AUTON: " + startPose.toString() + ", " + starter.toString() + ", " + body.toString());
+      "AUTON: " + startPose.toString() + ", " + starter.toString() + ", " + body.toString()
+    );
 
     return startPose.getCommand().andThen(starter.getCommand()).andThen(body.getCommand(startPose));
   }

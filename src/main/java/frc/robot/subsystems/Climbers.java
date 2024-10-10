@@ -10,22 +10,24 @@ import frc.robot.util.SparkUtils;
 
 public class Climbers extends SafeSubsystem {
   private static final CANSparkMax m_leftClimberMotor =
-      new CANSparkMax(ClimberConstants.kLeftClimberID, MotorType.kBrushless);
+    new CANSparkMax(ClimberConstants.kLeftClimberID, MotorType.kBrushless);
   private static final CANSparkMax m_rightClimberMotor =
-      new CANSparkMax(ClimberConstants.kRightClimberID, MotorType.kBrushless);
+    new CANSparkMax(ClimberConstants.kRightClimberID, MotorType.kBrushless);
 
   static {
     SparkUtils.configure(
-        m_leftClimberMotor,
-        () -> m_leftClimberMotor.setIdleMode(IdleMode.kBrake),
-        () -> m_leftClimberMotor.setSmartCurrentLimit(ClimberConstants.kClimberCurrentLimit),
-        () -> SparkUtils.setPeriodicFrames(m_leftClimberMotor, 10, 0, 0, 0, 0, 0, 0));
+      m_leftClimberMotor,
+      () -> m_leftClimberMotor.setIdleMode(IdleMode.kBrake),
+      () -> m_leftClimberMotor.setSmartCurrentLimit(ClimberConstants.kClimberCurrentLimit),
+      () -> SparkUtils.setPeriodicFrames(m_leftClimberMotor, 10, 0, 0, 0, 0, 0, 0)
+    );
 
     SparkUtils.configure(
-        m_rightClimberMotor,
-        () -> m_rightClimberMotor.setIdleMode(IdleMode.kBrake),
-        () -> m_rightClimberMotor.setSmartCurrentLimit(ClimberConstants.kClimberCurrentLimit),
-        () -> SparkUtils.setPeriodicFrames(m_rightClimberMotor, 10, 0, 0, 0, 0, 0, 0));
+      m_rightClimberMotor,
+      () -> m_rightClimberMotor.setIdleMode(IdleMode.kBrake),
+      () -> m_rightClimberMotor.setSmartCurrentLimit(ClimberConstants.kClimberCurrentLimit),
+      () -> SparkUtils.setPeriodicFrames(m_rightClimberMotor, 10, 0, 0, 0, 0, 0, 0)
+    );
   }
 
   private static final Climbers m_instance = new Climbers();
@@ -37,13 +39,16 @@ public class Climbers extends SafeSubsystem {
 
   public Command extendClimbers() {
     return runEnd(
-        () -> {
-          m_rightClimberMotor.setVoltage(
-              ClimberConstants.kClimberVolts * -OI.OPERATOR_CONTROLLER.getRightY());
-          m_leftClimberMotor.setVoltage(
-              ClimberConstants.kClimberVolts * -OI.OPERATOR_CONTROLLER.getLeftY());
-        },
-        this::stop);
+      () -> {
+        m_rightClimberMotor.setVoltage(
+          ClimberConstants.kClimberVolts * -OI.OPERATOR_CONTROLLER.getRightY()
+        );
+        m_leftClimberMotor.setVoltage(
+          ClimberConstants.kClimberVolts * -OI.OPERATOR_CONTROLLER.getLeftY()
+        );
+      },
+      this::stop
+    );
   }
 
   @Override

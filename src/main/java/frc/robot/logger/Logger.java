@@ -52,7 +52,7 @@ public class Logger {
   private static final String OUTPUT_LOG_DIR = "/RealOutputs/";
   private static final String METADATA_LOG_DIR = "/RealMetadata/";
 
-  /** List of loggables to be updated each period. */
+  // List of loggables to be updated each period.
   private static final ArrayList<Loggable> loggables = new ArrayList<>();
 
   // Entry maps for logging to disk
@@ -71,7 +71,7 @@ public class Logger {
   private static NetworkTable outputTable;
   private static NetworkTable metadataTable;
 
-  /** PubSubOptions to use for logging. */
+  // PubSubOptions to use for logging.
   private static final PubSubOption pubOptions = PubSubOption.keepDuplicates(true);
 
   // Publisher maps for logging to network tables
@@ -81,14 +81,14 @@ public class Logger {
   private static final HashMap<String, IntegerPublisher> integerPublishers = new HashMap<>();
   private static final HashMap<String, StringPublisher> stringPublishers = new HashMap<>();
   private static final HashMap<String, BooleanArrayPublisher> booleanArrayPublishers =
-      new HashMap<>();
+    new HashMap<>();
   private static final HashMap<String, DoubleArrayPublisher> doubleArrayPublishers =
-      new HashMap<>();
+    new HashMap<>();
   private static final HashMap<String, FloatArrayPublisher> floatArrayPublishers = new HashMap<>();
   private static final HashMap<String, IntegerArrayPublisher> integerArrayPublishers =
-      new HashMap<>();
+    new HashMap<>();
   private static final HashMap<String, StringArrayPublisher> stringArrayPublishers =
-      new HashMap<>();
+    new HashMap<>();
 
   // Cannot be initialized until after start to ensure proper file creation
   private static final DataLog m_log;
@@ -112,25 +112,27 @@ public class Logger {
     }
   }
 
-  /** Sets the proper log file name. Should be called after DS connection. */
+  // Sets the proper log file name. Should be called after DS connection.
   public static void initFilename() {
     if (DriverStation.isFMSAttached()) {
       // File name during event
       m_log.setFilename(
-          "FRC_"
-              + DriverStation.getEventName()
-              + "_"
-              + DriverStation.getMatchType().toString()
-              + "_"
-              + DriverStation.getMatchNumber()
-              + ".wpilog");
+        "FRC_"
+          + DriverStation.getEventName()
+          + "_"
+          + DriverStation.getMatchType().toString()
+          + "_"
+          + DriverStation.getMatchNumber()
+          + ".wpilog"
+      );
     } else {
       // File name without FMS connection
       m_log.setFilename(
-          "FRC_"
-              + LocalDateTime.now(ZoneId.of("UTC-8"))
-                  .format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss"))
-              + ".wpilog");
+        "FRC_"
+          + LocalDateTime.now(ZoneId.of("UTC-8"))
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH.mm.ss"))
+          + ".wpilog"
+      );
     }
   }
 
@@ -142,7 +144,7 @@ public class Logger {
     log("Device " + loggable.getDirectory() + " initialized");
   }
 
-  /** Update all registered loggables. Should be called every period. */
+  // Update all registered loggables. Should be called every period.
   public static void updateLogs() {
     loggables.forEach(e -> e.log());
   }
@@ -180,14 +182,14 @@ public class Logger {
   public static void recordOutput(String path, boolean value) {
     // Retrieve/create log entry and record value
     booleanLogs
-        .computeIfAbsent(path, k -> new BooleanLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(value);
+      .computeIfAbsent(path, k -> new BooleanLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(value);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       booleanPublishers
-          .computeIfAbsent(path, k -> outputTable.getBooleanTopic(path).publish(pubOptions))
-          .set(value);
+        .computeIfAbsent(path, k -> outputTable.getBooleanTopic(path).publish(pubOptions))
+        .set(value);
     }
   }
 
@@ -195,14 +197,14 @@ public class Logger {
   public static void recordOutput(String path, double value) {
     // Retrieve/create log entry and record value
     doubleLogs
-        .computeIfAbsent(path, k -> new DoubleLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(value);
+      .computeIfAbsent(path, k -> new DoubleLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(value);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       doublePublishers
-          .computeIfAbsent(path, k -> outputTable.getDoubleTopic(path).publish(pubOptions))
-          .set(value);
+        .computeIfAbsent(path, k -> outputTable.getDoubleTopic(path).publish(pubOptions))
+        .set(value);
     }
   }
 
@@ -210,14 +212,14 @@ public class Logger {
   public static void recordOutput(String path, float value) {
     // Retrieve/create log entry and record value
     floatLogs
-        .computeIfAbsent(path, k -> new FloatLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(value);
+      .computeIfAbsent(path, k -> new FloatLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(value);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       floatPublishers
-          .computeIfAbsent(path, k -> outputTable.getFloatTopic(path).publish(pubOptions))
-          .set(value);
+        .computeIfAbsent(path, k -> outputTable.getFloatTopic(path).publish(pubOptions))
+        .set(value);
     }
   }
 
@@ -225,14 +227,14 @@ public class Logger {
   public static void recordOutput(String path, int value) {
     // Retrieve/create log entry and record value
     integerLogs
-        .computeIfAbsent(path, k -> new IntegerLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(value);
+      .computeIfAbsent(path, k -> new IntegerLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(value);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       integerPublishers
-          .computeIfAbsent(path, k -> outputTable.getIntegerTopic(path).publish(pubOptions))
-          .set(value);
+        .computeIfAbsent(path, k -> outputTable.getIntegerTopic(path).publish(pubOptions))
+        .set(value);
     }
   }
 
@@ -240,14 +242,14 @@ public class Logger {
   public static void recordOutput(String path, String value) {
     // Retrieve/create log entry and record value
     stringLogs
-        .computeIfAbsent(path, k -> new StringLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(value);
+      .computeIfAbsent(path, k -> new StringLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(value);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       stringPublishers
-          .computeIfAbsent(path, k -> outputTable.getStringTopic(path).publish(pubOptions))
-          .set(value);
+        .computeIfAbsent(path, k -> outputTable.getStringTopic(path).publish(pubOptions))
+        .set(value);
     }
   }
 
@@ -255,14 +257,14 @@ public class Logger {
   public static void recordOutput(String path, boolean[] values) {
     // Retrieve/create log entry and record value
     booleanArrayLogs
-        .computeIfAbsent(path, k -> new BooleanArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(values);
+      .computeIfAbsent(path, k -> new BooleanArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(values);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       booleanArrayPublishers
-          .computeIfAbsent(path, k -> outputTable.getBooleanArrayTopic(path).publish(pubOptions))
-          .set(values);
+        .computeIfAbsent(path, k -> outputTable.getBooleanArrayTopic(path).publish(pubOptions))
+        .set(values);
     }
   }
 
@@ -270,14 +272,14 @@ public class Logger {
   public static void recordOutput(String path, double[] values) {
     // Retrieve/create log entry and record value
     doubleArrayLogs
-        .computeIfAbsent(path, k -> new DoubleArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(values);
+      .computeIfAbsent(path, k -> new DoubleArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(values);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       doubleArrayPublishers
-          .computeIfAbsent(path, k -> outputTable.getDoubleArrayTopic(path).publish(pubOptions))
-          .set(values);
+        .computeIfAbsent(path, k -> outputTable.getDoubleArrayTopic(path).publish(pubOptions))
+        .set(values);
     }
   }
 
@@ -285,14 +287,14 @@ public class Logger {
   public static void recordOutput(String path, float[] values) {
     // Retrieve/create log entry and record value
     floatArrayLogs
-        .computeIfAbsent(path, k -> new FloatArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(values);
+      .computeIfAbsent(path, k -> new FloatArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(values);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       floatArrayPublishers
-          .computeIfAbsent(path, k -> outputTable.getFloatArrayTopic(path).publish(pubOptions))
-          .set(values);
+        .computeIfAbsent(path, k -> outputTable.getFloatArrayTopic(path).publish(pubOptions))
+        .set(values);
     }
   }
 
@@ -300,14 +302,14 @@ public class Logger {
   public static void recordOutput(String path, long[] values) {
     // Retrieve/create log entry and record value
     integerArrayLogs
-        .computeIfAbsent(path, k -> new IntegerArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(values);
+      .computeIfAbsent(path, k -> new IntegerArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(values);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       integerArrayPublishers
-          .computeIfAbsent(path, k -> outputTable.getIntegerArrayTopic(path).publish(pubOptions))
-          .set(values);
+        .computeIfAbsent(path, k -> outputTable.getIntegerArrayTopic(path).publish(pubOptions))
+        .set(values);
     }
   }
 
@@ -325,14 +327,14 @@ public class Logger {
   public static void recordOutput(String path, String[] values) {
     // Retrieve/create log entry and record value
     stringArrayLogs
-        .computeIfAbsent(path, k -> new StringArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
-        .append(values);
+      .computeIfAbsent(path, k -> new StringArrayLogEntry(m_log, OUTPUT_LOG_DIR + path))
+      .append(values);
 
     if (Config.NTStream) {
       // Retrieve/create publisher and record value
       stringArrayPublishers
-          .computeIfAbsent(path, k -> outputTable.getStringArrayTopic(path).publish(pubOptions))
-          .set(values);
+        .computeIfAbsent(path, k -> outputTable.getStringArrayTopic(path).publish(pubOptions))
+        .set(values);
     }
   }
 
@@ -367,16 +369,18 @@ public class Logger {
   public static void recordOutput(String path, Trajectory value) {
     // Map trajectory into Pose2d[]
     recordOutput(
-        path, value.getStates().stream().map(state -> state.poseMeters).toArray(Pose2d[]::new));
+      path, value.getStates().stream().map(state -> state.poseMeters).toArray(Pose2d[]::new)
+    );
   }
 
   public static void recordOutput(String path, ChassisSpeeds value) {
     // Map speeds in double[]
     recordOutput(
-        path,
-        new double[] {
-          value.vxMetersPerSecond, value.vyMetersPerSecond, value.omegaRadiansPerSecond
-        });
+      path,
+      new double[] {
+        value.vxMetersPerSecond, value.vyMetersPerSecond, value.omegaRadiansPerSecond
+      }
+    );
   }
 
   public static void recordOutput(String path, SwerveModuleState... values) {

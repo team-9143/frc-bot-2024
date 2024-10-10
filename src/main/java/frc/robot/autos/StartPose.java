@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.Drivetrain;
 
-/** Enum of starting positions to set drivetrain odometry and meet path expectations. */
+// Enum of starting positions to set drivetrain odometry and meet path expectations.
 public enum StartPose {
   Subwoofer_amp_side(new Pose2d(0.88, 6.57, Rotation2d.fromDegrees(60))),
   Subwoofer_amp_side_v2(new Pose2d(0.88, 6.57, Rotation2d.fromDegrees(60))),
@@ -20,27 +20,24 @@ public enum StartPose {
 
   Wing(new Pose2d(1.36, 1.62, new Rotation2d()));
 
-  /** Raw unflipped pose */
+  // Raw unflipped pose.
   private final Pose2d pose;
 
   StartPose(Pose2d pose) {
     this.pose = pose;
   }
 
-  /** Resets drivetrain odometry to assumed starting pose */
+  // Resets drivetrain odometry to assumed starting pose.
   public Command getCommand() {
     return new InstantCommand(() -> Drivetrain.resetOdometry(getDSRelativePose()));
   }
 
-  /** Returns raw unflipped pose */
+  // Returns raw unflipped pose.
   public Pose2d getRawPose() {
     return pose;
   }
 
-  /**
-   * Returns pose as seen from driver station rotation (used for driving, matches with ds- and
-   * robot-oriented movement)
-   */
+  // Returns pose as seen from driver station rotation (used for driving, matches with ds- and robot-oriented movement)
   public Pose2d getDSRelativePose() {
     return Pathing.isRedAlliance() ? GeometryUtil.flipFieldPose(pose) : pose;
   }

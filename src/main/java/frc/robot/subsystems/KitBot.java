@@ -16,22 +16,24 @@ import frc.robot.util.SparkUtils;
 // Controls shooter wheels.
 public class KitBot extends SafeSubsystem {
   private static final CANSparkMax feeder_motor =
-      new CANSparkMax(KitBotConstants.kFeederID, MotorType.kBrushed);
+    new CANSparkMax(KitBotConstants.kFeederID, MotorType.kBrushed);
   private static final CANSparkMax launcher_motor =
-      new CANSparkMax(KitBotConstants.kLauncherID, MotorType.kBrushed);
+    new CANSparkMax(KitBotConstants.kLauncherID, MotorType.kBrushed);
 
   static {
     // Feeder motor setup
     SparkUtils.configure(
-        feeder_motor,
-        () -> feeder_motor.setIdleMode(IdleMode.kBrake),
-        () -> feeder_motor.setSmartCurrentLimit(KitBotConstants.kFeedCurrentLimit));
+      feeder_motor,
+      () -> feeder_motor.setIdleMode(IdleMode.kBrake),
+      () -> feeder_motor.setSmartCurrentLimit(KitBotConstants.kFeedCurrentLimit)
+    );
 
     // Launcher motor setup
     SparkUtils.configure(
-        launcher_motor,
-        () -> launcher_motor.setIdleMode(IdleMode.kBrake),
-        () -> launcher_motor.setSmartCurrentLimit(KitBotConstants.kLauncherCurrentLimit));
+      launcher_motor,
+      () -> launcher_motor.setIdleMode(IdleMode.kBrake),
+      () -> launcher_motor.setSmartCurrentLimit(KitBotConstants.kLauncherCurrentLimit)
+    );
   }
 
   private static final KitBot m_kitbot = new KitBot();
@@ -44,12 +46,16 @@ public class KitBot extends SafeSubsystem {
   // Returns a command to intake a game piece using launcher wheels
   public Command getIntakeCommand() {
     return new ParallelCommandGroup(
-        startEnd(
-            () -> feeder_motor.setVoltage(KitBotConstants.kIntakeFeederSpeed * 12),
-            () -> feeder_motor.stopMotor()),
-        startEnd(
-            () -> launcher_motor.setVoltage(KitBotConstants.kIntakeLauncherSpeed * 12),
-            () -> launcher_motor.stopMotor()));
+      startEnd(
+        () -> feeder_motor.setVoltage(KitBotConstants.kIntakeFeederSpeed * 12),
+        () -> feeder_motor.stopMotor()
+      ),
+      
+      startEnd(
+        () -> launcher_motor.setVoltage(KitBotConstants.kIntakeLauncherSpeed * 12),
+        () -> launcher_motor.stopMotor()
+      )
+    );
   }
 
   // Returns a command to shoot a game piece using launcher wheels.

@@ -14,14 +14,15 @@ import frc.robot.util.SparkUtils;
 public class Amper extends SafeSubsystem {
 
   private static final CANSparkMax amper_motor =
-      new CANSparkMax(AmperConstants.kAmperID, MotorType.kBrushed);
+    new CANSparkMax(AmperConstants.kAmperID, MotorType.kBrushed);
 
   static {
     // Amper motor setup
     SparkUtils.configure(
-        amper_motor,
-        () -> amper_motor.setIdleMode(IdleMode.kBrake),
-        () -> amper_motor.setSmartCurrentLimit(AmperConstants.kAmperCurrentLimit));
+      amper_motor,
+      () -> amper_motor.setIdleMode(IdleMode.kBrake),
+      () -> amper_motor.setSmartCurrentLimit(AmperConstants.kAmperCurrentLimit)
+    );
   }
 
   private static final Amper m_amper = new Amper();
@@ -34,22 +35,25 @@ public class Amper extends SafeSubsystem {
   // Method to set the motor for intake mode.
   public Command getIntakeCommand() {
     return startEnd(
-        () -> amper_motor.setVoltage(AmperConstants.kAmperIntakeSpeed * 12),
-        () -> amper_motor.stopMotor());
+      () -> amper_motor.setVoltage(AmperConstants.kAmperIntakeSpeed * 12),
+      () -> amper_motor.stopMotor()
+    );
   }
 
   // Method to set the motot for scoring mode.
   public Command getScoreCommand() {
     return startEnd(
-        () -> amper_motor.setVoltage(AmperConstants.kAmperScoreSpeed * 12),
-        () -> amper_motor.stopMotor());
+      () -> amper_motor.setVoltage(AmperConstants.kAmperScoreSpeed * 12),
+      () -> amper_motor.stopMotor()
+    );
   }
 
   // Method to set the motor at stall speed.
   public Command getHoldPositionCommand() {
     return startEnd(
-        () -> amper_motor.setVoltage(AmperConstants.kAmperStallSpeed * 12),
-        () -> amper_motor.stopMotor());
+      () -> amper_motor.setVoltage(AmperConstants.kAmperStallSpeed * 12),
+      () -> amper_motor.stopMotor()
+    );
   }
 
   // Method to stop the motor
