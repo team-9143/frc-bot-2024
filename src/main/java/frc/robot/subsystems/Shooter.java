@@ -6,7 +6,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.PhysConsts;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.devices.OI;
 import frc.robot.logger.Logger;
@@ -29,16 +29,16 @@ public class Shooter extends SafeSubsystem {
         () -> follower.setIdleMode(IdleMode.kCoast),
         () -> follower.follow(m_motor),
         () -> encoder_bottom.setMeasurementPeriod(20),
-        () -> encoder_bottom.setVelocityConversionFactor(PhysConsts.kShooterMechToSens / 60),
+        () -> encoder_bottom.setVelocityConversionFactor(PhysicalConstants.kShooterMechToSens / 60),
         () -> SparkUtils.setPeriodicFrames(follower, 10, 20, 0, 0, 0, 0, 0));
 
     // Main motor setup
     SparkUtils.configure(
         m_motor,
         () -> m_motor.setIdleMode(IdleMode.kCoast),
-        () -> m_motor.setSmartCurrentLimit(PhysConsts.kNEOCurrentLimit),
+        () -> m_motor.setSmartCurrentLimit(PhysicalConstants.kNEOCurrentLimit),
         () -> encoder_top.setMeasurementPeriod(20),
-        () -> encoder_top.setVelocityConversionFactor(PhysConsts.kShooterMechToSens / 60),
+        () -> encoder_top.setVelocityConversionFactor(PhysicalConstants.kShooterMechToSens / 60),
         () -> SparkUtils.setPeriodicFrames(m_motor, 10, 20, 0, 0, 0, 0, 0));
   }
 

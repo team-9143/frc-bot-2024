@@ -9,7 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FeederConsts;
-import frc.robot.Constants.PhysConsts;
+import frc.robot.Constants.PhysicalConstants;
 import frc.robot.logger.Logger;
 import java.util.function.Supplier;
 
@@ -19,11 +19,11 @@ public class Feeder extends SafeSubsystem {
       new TalonFXConfiguration()
           .withCurrentLimits(
               new CurrentLimitsConfigs()
-                  .withSupplyCurrentLimit(PhysConsts.kNEOCurrentLimit)
+                  .withSupplyCurrentLimit(PhysicalConstants.kNEOCurrentLimit)
                   .withSupplyCurrentLimitEnable(true))
           .withMotorOutput(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast))
           .withFeedback(
-              new FeedbackConfigs().withSensorToMechanismRatio(1d / PhysConsts.kFeederMechToSens));
+              new FeedbackConfigs().withSensorToMechanismRatio(1d / PhysicalConstants.kFeederMechToSens));
 
   private static final TalonFX m_motor = new TalonFX(FeederConsts.kFeedMotorID);
   private static final Supplier<Double> m_velocitySupplier;

@@ -25,7 +25,7 @@ public class Constants {
   }
 
   // Physical parts of the robot, such as gearboxes or wheel diameters.
-  public static class PhysConstants {
+  public static class PhysicalConstants {
     // NEO V1.1 nominal voltage.
     public static final int kNEOMaxVoltage = 12;
 
